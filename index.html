@@ -5,6 +5,7 @@
     <link rel="manifest" href="manifest.json">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0, touch-action: manipulation">
     <title>BLOOD RUSH | RPG Shooter</title>
+    <link rel="manifest" href="manifest.json">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: #000; display: flex; justify-content: center; align-items: center; height: 100vh; font-family: 'Courier New', monospace; overflow: hidden; user-select: none; -webkit-user-select: none; touch-action: manipulation; }
@@ -41,12 +42,17 @@
         #settingsMenu select:hover, #settingsMenu button:hover { background: #ff006e; }
         #settingsMenu .close-btn { margin-top: 25px; padding: 10px 30px; font-size: 1.1rem; }
         #mobileControls { position: absolute; bottom: 0; left: 0; width: 100%; height: 100%; display: none; pointer-events: none; z-index: 8; }
-        #joystickZone { position: absolute; bottom: 40px; left: 30px; width: 120px; height: 120px; pointer-events: auto; }
-        #joystickBase { width: 120px; height: 120px; border-radius: 50%; background: rgba(255,255,255,0.15); border: 2px solid rgba(255,255,255,0.3); position: relative; }
-        #joystickThumb { width: 50px; height: 50px; border-radius: 50%; background: rgba(255,0,110,0.6); border: 2px solid #ff006e; position: absolute; top: 35px; left: 35px; transition: none; pointer-events: none; }
-        #fireBtn { position: absolute; bottom: 60px; right: 40px; width: 70px; height: 70px; border-radius: 50%; background: rgba(255,0,110,0.5); border: 3px solid #ff006e; pointer-events: auto; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: bold; font-size: 0.8rem; text-shadow: 0 0 10px #ff006e; }
-        #dashBtn { position: absolute; bottom: 140px; right: 50px; width: 55px; height: 55px; border-radius: 50%; background: rgba(0,180,216,0.4); border: 2px solid #00b4d8; pointer-events: auto; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: bold; font-size: 0.7rem; }
-        #weaponBtn { position: absolute; bottom: 40px; right: 130px; width: 55px; height: 55px; border-radius: 50%; background: rgba(255,190,11,0.4); border: 2px solid #ffbe0b; pointer-events: auto; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: bold; font-size: 0.7rem; }
+        /* Левый джойстик — движение */
+        #joystickMove { position: absolute; bottom: 40px; left: 30px; width: 120px; height: 120px; pointer-events: auto; }
+        #joystickMoveBase { width: 120px; height: 120px; border-radius: 50%; background: rgba(255,255,255,0.15); border: 2px solid rgba(255,255,255,0.3); position: relative; }
+        #joystickMoveThumb { width: 50px; height: 50px; border-radius: 50%; background: rgba(255,0,110,0.6); border: 2px solid #ff006e; position: absolute; top: 35px; left: 35px; transition: none; pointer-events: none; }
+        /* Правый джойстик — прицеливание */
+        #joystickAim { position: absolute; bottom: 40px; right: 140px; width: 120px; height: 120px; pointer-events: auto; }
+        #joystickAimBase { width: 120px; height: 120px; border-radius: 50%; background: rgba(255,255,255,0.15); border: 2px solid rgba(255,190,11,0.5); position: relative; }
+        #joystickAimThumb { width: 50px; height: 50px; border-radius: 50%; background: rgba(255,190,11,0.6); border: 2px solid #ffbe0b; position: absolute; top: 35px; left: 35px; transition: none; pointer-events: none; }
+        #fireBtn { position: absolute; bottom: 60px; right: 30px; width: 70px; height: 70px; border-radius: 50%; background: rgba(255,0,110,0.5); border: 3px solid #ff006e; pointer-events: auto; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: bold; font-size: 0.8rem; text-shadow: 0 0 10px #ff006e; }
+        #dashBtn { position: absolute; bottom: 140px; right: 40px; width: 55px; height: 55px; border-radius: 50%; background: rgba(0,180,216,0.4); border: 2px solid #00b4d8; pointer-events: auto; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: bold; font-size: 0.7rem; }
+        #weaponBtn { position: absolute; bottom: 40px; right: 110px; width: 50px; height: 50px; border-radius: 50%; background: rgba(255,190,11,0.4); border: 2px solid #ffbe0b; pointer-events: auto; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: bold; font-size: 0.6rem; }
         #victoryScreen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; justify-content: center; align-items: center; background: rgba(0,0,0,0.9); z-index: 20; pointer-events: auto; }
         #victoryScreen h1 { font-size: 3.5rem; color: #ffbe0b; text-shadow: 0 0 30px #ffbe0b, 0 0 60px #ffbe0b, 0 0 100px #ff6600; animation: victoryGlow 1.5s ease-in-out infinite; margin-bottom: 15px; }
         @keyframes victoryGlow { 0%,100% { text-shadow: 0 0 30px #ffbe0b, 0 0 60px #ffbe0b; } 50% { text-shadow: 0 0 50px #ffbe0b, 0 0 100px #ff6600, 0 0 150px #ff0000; } }
@@ -78,7 +84,7 @@
                 <span>🎮 Управление:</span>
                 <select id="controlModeSelect" onchange="changeControlMode()">
                     <option value="pc">🖥️ ПК (WASD + Мышь)</option>
-                    <option value="mobile">📱 Мобильное (Джойстик)</option>
+                    <option value="mobile">📱 Мобильное (2 Джойстика)</option>
                 </select>
             </div>
             <div class="setting-row">
@@ -93,7 +99,14 @@
             <button class="close-btn" onclick="closeSettings()">✅ ЗАКРЫТЬ</button>
         </div>
         <div id="mobileControls">
-            <div id="joystickZone"><div id="joystickBase"><div id="joystickThumb"></div></div></div>
+            <!-- Левый джойстик — ДВИЖЕНИЕ -->
+            <div id="joystickMove">
+                <div id="joystickMoveBase"><div id="joystickMoveThumb"></div></div>
+            </div>
+            <!-- Правый джойстик — ПРИЦЕЛИВАНИЕ -->
+            <div id="joystickAim">
+                <div id="joystickAimBase"><div id="joystickAimThumb"></div></div>
+            </div>
             <div id="fireBtn">🔫</div>
             <div id="dashBtn">💨</div>
             <div id="weaponBtn">🔄</div>
@@ -105,10 +118,13 @@
         </div>
     </div>
     <script>
-        // Глобальные переменные управления
         let controlMode = 'pc';
-        let joystickDX = 0, joystickDY = 0;
-        let joystickId = null;
+        // Левый джойстик — движение
+        let moveDX = 0, moveDY = 0;
+        let moveId = null;
+        // Правый джойстик — прицеливание
+        let aimDX = 0, aimDY = 0;
+        let aimId = null;
 
         window.openSettings = function() { document.getElementById('settingsMenu').style.display = 'flex'; };
         window.closeSettings = function() { document.getElementById('settingsMenu').style.display = 'none'; };
@@ -131,8 +147,6 @@
             document.getElementById('victoryScreen').style.display = 'none';
             _restartGameInternal();
         };
-
-        // Загрузка сохранённых настроек
         if (localStorage.getItem('bloodRush_mode')) {
             controlMode = localStorage.getItem('bloodRush_mode');
             document.getElementById('controlModeSelect').value = controlMode;
@@ -287,15 +301,19 @@
                 if(player.dashTimer>0){player.x+=player.dashDx;player.y+=player.dashDy;player.dashTimer--;player.dashDx*=0.85;player.dashDy*=0.85;}
                 if(player.dashTimer<=0){
                     let dx=0,dy=0;
-                    if(controlMode==='mobile'){dx=joystickDX;dy=joystickDY;}
+                    if(controlMode==='mobile'){dx=moveDX;dy=moveDY;}
                     else{if(inputState.w)dy-=1;if(inputState.s)dy+=1;if(inputState.a)dx-=1;if(inputState.d)dx+=1;}
                     const len=Math.sqrt(dx*dx+dy*dy);if(len>1){dx/=len;dy/=len;}
                     player.x+=dx*player.speed;player.y+=dy*player.speed;
                 }
                 if(roomCleared&&transitionTimer<=0){const m=35;if(player.x<m&&currentRoomX>0&&mapGrid[currentRoomY]&&mapGrid[currentRoomY][currentRoomX-1]===1)goRoom('left');else if(player.x>W-m&&currentRoomX<MAP_SIZE-1&&mapGrid[currentRoomY]&&mapGrid[currentRoomY][currentRoomX+1]===1)goRoom('right');else if(player.y<m&&currentRoomY>0&&mapGrid[currentRoomY-1]&&mapGrid[currentRoomY-1][currentRoomX]===1)goRoom('up');else if(player.y>H-m&&currentRoomY<MAP_SIZE-1&&mapGrid[currentRoomY+1]&&mapGrid[currentRoomY+1][currentRoomX]===1)goRoom('down');}
                 player.x=Math.max(player.radius,Math.min(W-player.radius,player.x));player.y=Math.max(player.radius,Math.min(H-player.radius,player.y));
-                if(controlMode==='mobile'){if(joystickDX!==0||joystickDY!==0)player.angle=Math.atan2(joystickDY,joystickDX);}
-                else{player.angle=Math.atan2(inputState.mouseY-player.y,inputState.mouseX-player.x);}
+                // Прицеливание: в мобильном режиме — правый джойстик, на ПК — мышь
+                if(controlMode==='mobile'){
+                    if(aimDX!==0||aimDY!==0)player.angle=Math.atan2(aimDY,aimDX);
+                }else{
+                    player.angle=Math.atan2(inputState.mouseY-player.y,inputState.mouseX-player.x);
+                }
                 if(inputState.mouseDown&&weapons[currentWeapon]?.name==='УЗИ')shoot();
                 for(let i=bullets.length-1;i>=0;i--){bullets[i].update();if(bullets[i].life<=0){bullets.splice(i,1);continue;}for(let j=enemies.length-1;j>=0;j--){const dx=bullets[i].x-enemies[j].x,dy=bullets[i].y-enemies[j].y;if(Math.sqrt(dx*dx+dy*dy)<enemies[j].radius+bullets[i].radius){if(enemies[j].takeDamage(bullets[i].damage))enemies.splice(j,1);if(bullets[i].type!=='rocket'){bullets.splice(i,1);}break;}}}
                 for(let i=enemyBullets.length-1;i>=0;i--){enemyBullets[i].update();if(enemyBullets[i].life<=0){enemyBullets.splice(i,1);continue;}const dx=enemyBullets[i].x-player.x,dy=enemyBullets[i].y-player.y;if(Math.sqrt(dx*dx+dy*dy)<player.radius+4&&player.invincible<=0){player.health-=12;player.invincible=10;sfxPH();enemyBullets.splice(i,1);for(let p=0;p<5;p++)particles.push(new Particle(player.x,player.y,'#ff0000'));if(player.health<=0){player.health=0;gameActive=false;}}}
@@ -329,8 +347,10 @@
                 ctx.fillStyle='#fff';ctx.shadowBlur=0;ctx.beginPath();ctx.arc(6,-5,5,0,Math.PI*2);ctx.fill();ctx.fillStyle='#000';ctx.beginPath();ctx.arc(7,-5,2.5,0,Math.PI*2);ctx.fill();
                 ctx.restore();ctx.globalAlpha=1;
                 if(player.dashTimer>0){ctx.strokeStyle='#00b4d8';ctx.lineWidth=2;ctx.globalAlpha=0.4;ctx.beginPath();ctx.moveTo(player.x,player.y);ctx.lineTo(player.x-player.dashDx*3,player.y-player.dashDy*3);ctx.stroke();ctx.globalAlpha=1;}
-                ctx.strokeStyle='#ffffff33';ctx.lineWidth=1;ctx.setLineDash([4,8]);ctx.beginPath();ctx.moveTo(player.x+Math.cos(player.angle)*22,player.y+Math.sin(player.angle)*22);ctx.lineTo(inputState.mouseX,inputState.mouseY);ctx.stroke();ctx.setLineDash([]);
-                ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(inputState.mouseX,inputState.mouseY,4,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#ff006e';ctx.lineWidth=2;ctx.beginPath();ctx.arc(inputState.mouseX,inputState.mouseY,8,0,Math.PI*2);ctx.stroke();
+                if(controlMode!=='mobile'){
+                    ctx.strokeStyle='#ffffff33';ctx.lineWidth=1;ctx.setLineDash([4,8]);ctx.beginPath();ctx.moveTo(player.x+Math.cos(player.angle)*22,player.y+Math.sin(player.angle)*22);ctx.lineTo(inputState.mouseX,inputState.mouseY);ctx.stroke();ctx.setLineDash([]);
+                    ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(inputState.mouseX,inputState.mouseY,4,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#ff006e';ctx.lineWidth=2;ctx.beginPath();ctx.arc(inputState.mouseX,inputState.mouseY,8,0,Math.PI*2);ctx.stroke();
+                }
                 if(transitionTimer>0){const a=transitionTimer/20;ctx.fillStyle=`rgba(0,0,0,${a})`;ctx.fillRect(0,0,W,H);}
                 if(!gameActive&&!victory){ctx.fillStyle='rgba(0,0,0,0.8)';ctx.fillRect(0,0,W,H);ctx.fillStyle='#ff006e';ctx.font='bold 48px "Courier New"';ctx.textAlign='center';ctx.fillText('ТЫ УБИТ',W/2,H/2-20);ctx.fillStyle='#fff';ctx.font='20px "Courier New"';ctx.fillText(`Комнат: ${roomsCleared}/${totalRooms} | Убито: ${kills}`,W/2,H/2+30);ctx.fillText('Нажми R для перезапуска',W/2,H/2+60);}
             }
@@ -343,12 +363,21 @@
             canvas.addEventListener('mouseup',(e)=>{e.preventDefault();inputState.mouseDown=false;});
             canvas.addEventListener('contextmenu',(e)=>e.preventDefault());
 
-            // Мобильный джойстик
-            const jb=document.getElementById('joystickBase'),jt=document.getElementById('joystickThumb');
-            jb.addEventListener('touchstart',(e)=>{e.preventDefault();const t=e.touches[0];joystickId=t.identifier;updateJoystick(t);});
-            jb.addEventListener('touchmove',(e)=>{e.preventDefault();for(let i=0;i<e.touches.length;i++){if(e.touches[i].identifier===joystickId){updateJoystick(e.touches[i]);break;}}});
-            jb.addEventListener('touchend',(e)=>{e.preventDefault();joystickDX=0;joystickDY=0;jt.style.top='35px';jt.style.left='35px';});
-            function updateJoystick(t){const r=jb.getBoundingClientRect();const cx=r.left+r.width/2,cy=r.top+r.height/2;let dx=t.clientX-cx,dy=t.clientY-cy;const dist=Math.sqrt(dx*dx+dy*dy),maxD=35;if(dist>maxD){dx=dx/dist*maxD;dy=dy/dist*maxD;}jt.style.top=(35+dy)+'px';jt.style.left=(35+dx)+'px';joystickDX=dx/maxD;joystickDY=dy/maxD;}
+            // === МОБИЛЬНОЕ УПРАВЛЕНИЕ: ДВА ДЖОЙСТИКА ===
+            
+            // Левый джойстик — ДВИЖЕНИЕ
+            const jMoveBase=document.getElementById('joystickMoveBase'),jMoveThumb=document.getElementById('joystickMoveThumb');
+            jMoveBase.addEventListener('touchstart',(e)=>{e.preventDefault();const t=e.touches[0];moveId=t.identifier;updateMoveJoystick(t);});
+            jMoveBase.addEventListener('touchmove',(e)=>{e.preventDefault();for(let i=0;i<e.touches.length;i++){if(e.touches[i].identifier===moveId){updateMoveJoystick(e.touches[i]);break;}}});
+            jMoveBase.addEventListener('touchend',(e)=>{e.preventDefault();moveDX=0;moveDY=0;jMoveThumb.style.top='35px';jMoveThumb.style.left='35px';});
+            function updateMoveJoystick(t){const r=jMoveBase.getBoundingClientRect();const cx=r.left+r.width/2,cy=r.top+r.height/2;let dx=t.clientX-cx,dy=t.clientY-cy;const dist=Math.sqrt(dx*dx+dy*dy),maxD=35;if(dist>maxD){dx=dx/dist*maxD;dy=dy/dist*maxD;}jMoveThumb.style.top=(35+dy)+'px';jMoveThumb.style.left=(35+dx)+'px';moveDX=dx/maxD;moveDY=dy/maxD;}
+
+            // Правый джойстик — ПРИЦЕЛИВАНИЕ
+            const jAimBase=document.getElementById('joystickAimBase'),jAimThumb=document.getElementById('joystickAimThumb');
+            jAimBase.addEventListener('touchstart',(e)=>{e.preventDefault();const t=e.touches[0];aimId=t.identifier;updateAimJoystick(t);});
+            jAimBase.addEventListener('touchmove',(e)=>{e.preventDefault();for(let i=0;i<e.touches.length;i++){if(e.touches[i].identifier===aimId){updateAimJoystick(e.touches[i]);break;}}});
+            jAimBase.addEventListener('touchend',(e)=>{e.preventDefault();aimDX=0;aimDY=0;jAimThumb.style.top='35px';jAimThumb.style.left='35px';});
+            function updateAimJoystick(t){const r=jAimBase.getBoundingClientRect();const cx=r.left+r.width/2,cy=r.top+r.height/2;let dx=t.clientX-cx,dy=t.clientY-cy;const dist=Math.sqrt(dx*dx+dy*dy),maxD=35;if(dist>maxD){dx=dx/dist*maxD;dy=dy/dist*maxD;}jAimThumb.style.top=(35+dy)+'px';jAimThumb.style.left=(35+dx)+'px';aimDX=dx/maxD;aimDY=dy/maxD;}
 
             // Мобильные кнопки
             document.getElementById('fireBtn').addEventListener('touchstart',(e)=>{e.preventDefault();initAudio();inputState.mouseDown=true;if(!gameActive){_restartGameInternal();return;}shoot();});
