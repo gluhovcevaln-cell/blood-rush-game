@@ -1,0 +1,12 @@
+{
+  "background_color": "#000000",
+  "dir": "ltr",
+  "display": "standalone",
+  "name": "Blood Rush",
+  "orientation": "landscape",
+  "scope": "/",
+  "short_name": "Blood Rush",
+  "start_url": "/blood-rush-game/",
+  "theme_color": "#ff006e",
+  "description": "2D шутер с видом сверху"
+}
